@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import RouteMap from "@/components/RouteMap";
 
 interface RouteSegment {
   mode: string;
@@ -109,64 +110,68 @@ const Dashboard = () => {
         </div>
       </motion.div>
 
-      {/* Routes */}
+      {/* Map + Routes */}
       <AnimatePresence>
         {routes && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid gap-4 md:grid-cols-3">
-            {routes.map((route, i) => (
-              <motion.div
-                key={route.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.1 }}
-                onClick={() => setSelectedRoute(route.id)}
-                className={`glass rounded-2xl p-5 cursor-pointer transition-all hover:border-primary/50 ${
-                  selectedRoute === route.id ? "border-primary glow-primary" : ""
-                }`}
-              >
-                <div className="flex items-center justify-between mb-3">
-                  <h3 className="font-semibold text-foreground text-sm">{route.label}</h3>
-                  <span className={`text-xs px-2 py-1 rounded-full font-medium ${
-                    route.tag === "AI Recommended" ? "bg-primary/20 text-primary" :
-                    route.tag === "Lowest Cost" ? "bg-accent/20 text-accent" :
-                    "bg-secondary text-secondary-foreground"
-                  }`}>{route.tag}</span>
-                </div>
+          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="grid gap-4 md:grid-cols-5">
+            {/* Map */}
+            <div className="md:col-span-3 h-[400px]">
+              <RouteMap selectedRouteId={selectedRoute} />
+            </div>
 
-                <div className="flex items-center gap-4 mb-3 text-sm">
-                  <div className="flex items-center gap-1 text-foreground">
-                    <Clock className="w-3.5 h-3.5 text-primary" />
-                    {route.totalTime}
+            {/* Route cards */}
+            <div className="md:col-span-2 space-y-3 overflow-auto max-h-[400px]">
+              {routes.map((route, i) => (
+                <motion.div
+                  key={route.id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: i * 0.1 }}
+                  onClick={() => setSelectedRoute(route.id)}
+                  className={`glass rounded-2xl p-4 cursor-pointer transition-all hover:border-primary/50 ${
+                    selectedRoute === route.id ? "border-primary glow-primary" : ""
+                  }`}
+                >
+                  <div className="flex items-center justify-between mb-2">
+                    <h3 className="font-semibold text-foreground text-sm">{route.label}</h3>
+                    <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
+                      route.tag === "AI Recommended" ? "bg-primary/20 text-primary" :
+                      route.tag === "Lowest Cost" ? "bg-accent/20 text-accent" :
+                      "bg-secondary text-secondary-foreground"
+                    }`}>{route.tag}</span>
                   </div>
-                  <div className="flex items-center gap-1 text-foreground">
-                    <Wallet className="w-3.5 h-3.5 text-primary" />
-                    ₹{route.totalCost}
-                  </div>
-                  <div className="flex items-center gap-1 text-foreground">
-                    <Leaf className="w-3.5 h-3.5 text-primary" />
-                    {route.totalCarbon}g
-                  </div>
-                </div>
 
-                {route.waitTime && (
-                  <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-3">
-                    <Timer className="w-3 h-3" />
-                    {route.waitTime}
-                  </div>
-                )}
-
-                <div className="flex items-center gap-1.5">
-                  {route.segments.map((seg, j) => (
-                    <div key={j} className="flex items-center gap-1">
-                      <div className={`p-1.5 rounded-lg ${j === 0 ? "bg-primary/20" : "bg-muted"}`}>
-                        <seg.icon className="w-3.5 h-3.5 text-primary" />
-                      </div>
-                      {j < route.segments.length - 1 && <ArrowRight className="w-3 h-3 text-muted-foreground" />}
+                  <div className="flex items-center gap-3 mb-2 text-sm">
+                    <div className="flex items-center gap-1 text-foreground">
+                      <Clock className="w-3.5 h-3.5 text-primary" /> {route.totalTime}
                     </div>
-                  ))}
-                </div>
-              </motion.div>
-            ))}
+                    <div className="flex items-center gap-1 text-foreground">
+                      <Wallet className="w-3.5 h-3.5 text-primary" /> ₹{route.totalCost}
+                    </div>
+                    <div className="flex items-center gap-1 text-foreground">
+                      <Leaf className="w-3.5 h-3.5 text-primary" /> {route.totalCarbon}g
+                    </div>
+                  </div>
+
+                  {route.waitTime && (
+                    <div className="flex items-center gap-1.5 text-xs text-muted-foreground mb-2">
+                      <Timer className="w-3 h-3" /> {route.waitTime}
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-1.5">
+                    {route.segments.map((seg, j) => (
+                      <div key={j} className="flex items-center gap-1">
+                        <div className={`p-1 rounded-lg ${j === 0 ? "bg-primary/20" : "bg-muted"}`}>
+                          <seg.icon className="w-3 h-3 text-primary" />
+                        </div>
+                        {j < route.segments.length - 1 && <ArrowRight className="w-2.5 h-2.5 text-muted-foreground" />}
+                      </div>
+                    ))}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
